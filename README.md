@@ -49,7 +49,7 @@
 
 **ClinicEMR** is a comprehensive Electronic Medical Record system designed to streamline clinic and hospital workflows including patient registration, visit management, billing, diagnostics, pharmacy, HR, inventory, accounts, and reporting.
 
-It is developed using **Laravel 10** with a modern Bootstrap UI, AJAX-based interactions, and Role-Based Access Control (RBAC). It supports both outpatient (OPD) and inpatient (IPD) processes with complete invoice tracking and reporting.
+It is developed using **Laravel 12** with a modern Bootstrap UI, AJAX-based interactions, and Role-Based Access Control (RBAC). It supports both outpatient (OPD) and inpatient (IPD) processes with complete invoice tracking and reporting.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -57,7 +57,7 @@ It is developed using **Laravel 10** with a modern Bootstrap UI, AJAX-based inte
 
 ### Built With
 
-* [Laravel 10](https://laravel.com/)
+* [Laravel 12](https://laravel.com/)
 * [Bootstrap 5](https://getbootstrap.com)
 * [jQuery](https://jquery.com)
 * [Select2](https://select2.org/)
@@ -78,7 +78,7 @@ To run this project locally:
 - PHP >= 8.1
 - MySQL
 - Composer
-- Node.js & npm (for frontend assets)
+- Bootstrap 5
 
 ### Installation
 
