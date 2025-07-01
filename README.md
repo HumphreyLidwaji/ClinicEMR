@@ -1,61 +1,83 @@
-# ClinicEMR
+# 🏥 ClinicEMR
 
-ClinicEMR is a modular, full-featured Electronic Medical Record (EMR) system designed for clinics and small hospitals. Built using Laravel/CodeIgniter, it supports patient management, appointments, billing, pharmacy, labs, inventory, HR, and accounting.
-
----
-
-## 🚀 Features
-
-- 🧑‍⚕️ **Patient Management**
-  - Registration, visit tracking (OPD/IP/Emergency)
-  - Vitals, consultations, and medications
-- 🗓 **Appointments & Queue System**
-  - Booking, scheduling, patient flow
-- 💳 **Billing & Invoicing**
-  - Automatic invoice generation for services, drugs, labs, imaging
-  - PDF receipts
-- 💊 **Pharmacy & Stock**
-  - Pharmacy sales with stock deduction
-  - Sales reports
-- 🧪 **Laboratory & Radiology**
-  - Order, result entry, and reporting
-- 🧾 **Accounting**
-  - Integrated accounting ledger for patient and procurement transactions
-- 🧍‍♂️ **Human Resource Management**
-  - Employees, leaves, payroll, and deductions
-- 🏪 **Inventory & Procurement**
-  - Item management, requisitions, purchase orders, goods received notes
-- 🔒 **Role-Based Access Control (RBAC)**
-  - Admin panel to manage users, roles, and permissions
+**ClinicEMR** is a modular Electronic Medical Record (EMR) system built for clinics, outpatient centers, and small hospitals. It integrates core healthcare workflows such as patient management, billing, pharmacy, HR, inventory, and more — with a focus on usability and real-time insights.
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Screenshots
 
-- Backend: Laravel 10 / CodeIgniter 4
-- Frontend: Blade, Bootstrap 5, jQuery
-- PDF Generation: DomPDF / Snappy
-- Authentication: Laravel Breeze or custom auth
-- DB: MySQL/MariaDB
+| Dashboard | OPD Queue | Patient Profile |
+|-----------|-----------|-----------------|
+| ![Dashboard](screenshots/dashboard.png) | ![OPD Queue](screenshots/opd-queue.png) | ![Patient](screenshots/patient-profile.png) |
 
 ---
 
-## 📦 Installation
+## ⚙️ Key Features
+
+### 👨‍⚕️ Patient & Visit Management
+- Registration, visit initiation (OPD/IP/Emergency)
+- Capture vitals, queueing, consultation workflows
+- Linked billing and records per visit
+
+### 🧾 Billing & Invoicing
+- Auto invoice generation for services, labs, imaging, and medications
+- PDF receipts, invoice editing, itemized views
+- Insurance-ready and split-payment support
+
+### 💊 Pharmacy Integration
+- Dispense medications linked to visit/prescription
+- Stock deductions & expiry management
+- Direct and walk-in sales support
+
+### 🧪 Laboratory & Radiology
+- Order tests from consultations
+- Record results, attach documents, and share reports
+- Integrated with billing
+
+### 🧍‍♂️ HR & Payroll
+- Employee records, leave tracking, and shift rosters
+- Payroll calculation, payslip generation, and deductions
+
+### 🏪 Inventory & Procurement
+- Item management, store transfers
+- Purchase Orders (PO), GRNs, stock adjustments, and alerts
+
+### 🔐 Role-Based Access Control (RBAC)
+- Fine-grained access via Roles & Permissions
+- Admin UI for user and permission management
+
+---
+
+## 🧰 Tech Stack
+
+| Layer     | Tech                              |
+|-----------|-----------------------------------|
+| Backend   | Laravel 10 / CodeIgniter 4        |
+| Frontend  | Blade, Bootstrap 5, jQuery        |
+| Database  | MySQL / MariaDB                   |
+| Auth      | Laravel Breeze / Custom RBAC      |
+| Reports   | DomPDF, SnappyPDF (PDF generation)|
+| Queue     | Laravel Queues / Cron Jobs        |
+
+---
+
+## 🧑‍💻 Installation Guide
 
 ```bash
-git clone https://github.com/your-username/ClinicEMR.git
+# Clone the repo
+git clone git@github.com:HumphreyLidwaji/ClinicEMR.git
 cd ClinicEMR
 
 # Install dependencies
 composer install
 
-# Setup environment
+# Copy and configure .env
 cp .env.example .env
 php artisan key:generate
 
-# Configure DB in .env
+# Configure database in .env
 php artisan migrate --seed
 
-# Serve
+# Serve the app
 php artisan serve
 
