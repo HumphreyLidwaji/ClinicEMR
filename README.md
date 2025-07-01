@@ -8,7 +8,7 @@
 
 | Dashboard | OPD Queue | Patient Profile |
 |-----------|-----------|-----------------|
-| ![Dashboard](screenshots/dashboard.png) | ![OPD Queue](screenshots/opd-queue.png) | ![Patient](screenshots/patient-profile.png) |
+| ![Dashboard](screenshots/dashboard.png) | ![OPD Queue](screenshots/opd-queue.png) | 
 
 ---
 
