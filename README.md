@@ -6,8 +6,8 @@
 
 ## 📸 Screenshots
 
-| Dashboard | OPD Queue | Patient Profile |
-|-----------|-----------|-----------------|
+| Dashboard | OPD Queue | 
+|-----------|-----------|
 | ![Dashboard](screenshots/dashboard.png) | ![OPD Queue](screenshots/opd-queue.png) | 
 
 ---
