@@ -5,11 +5,15 @@
     <h4 class="mb-4"><i class="bi bi-cash-coin"></i> Direct Sale (OTC)</h4>
 
     <div class="card shadow-sm">
+        <div class="card-header bg-light fw-semibold">
+            Enter Sale Details
+        </div>
+
         <div class="card-body">
             <form action="{{ route('sales.store') }}" method="POST" id="otcSaleForm">
                 @csrf
 
-                <div class="row g-3">
+                <div class="row g-4 align-items-end">
                     <div class="col-md-6">
                         <label for="drug_id" class="form-label">Select Drug</label>
                         <select name="drug_id" id="drug_id" class="form-select" required>
@@ -33,16 +37,18 @@
                     </div>
                 </div>
 
-                <div class="row mt-3">
-                    <div class="col-md-6 offset-md-6 text-end">
-                        <label class="form-label fw-bold">Total (KES)</label>
-                        <input type="text" id="total" class="form-control-plaintext text-end fw-bold" readonly>
+                <div class="row mt-4 align-items-center">
+                    <div class="col-md-6 offset-md-6">
+                        <div class="text-end">
+                            <label class="form-label fw-bold">Total (KES)</label>
+                            <input type="text" id="total" class="form-control-plaintext text-end fw-bold text-success" readonly value="0.00">
+                        </div>
                     </div>
                 </div>
 
                 <div class="text-end mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle-fill"></i> Submit Sale
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle-fill me-1"></i> Submit Sale
                     </button>
                 </div>
             </form>

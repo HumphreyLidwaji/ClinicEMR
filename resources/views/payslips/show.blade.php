@@ -1,29 +1,52 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h4>Payslip Details</h4>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Payslip Details</h5>
+        </div>
 
-    <p><strong>Employee:</strong> {{ $payslip->payroll->employee->first_name }}</p>
-    <p><strong>Month:</strong> {{ $payslip->payroll->pay_month }}</p>
-    <p><strong>Net Salary:</strong> {{ number_format($payslip->payroll->net_salary, 2) }}</p>
+        <div class="card-body">
+            <div class="mb-3">
+                <p><strong>Employee:</strong> {{ $payslip->payroll->employee->first_name }} {{ $payslip->payroll->employee->last_name }}</p>
+                <p><strong>Month:</strong> {{ $payslip->payroll->pay_month }}</p>
+                <p><strong>Net Salary:</strong> KES {{ number_format($payslip->payroll->net_salary, 2) }}</p>
+            </div>
 
-    <h5>Earnings</h5>
-    <ul>
-        @foreach($payslip->earnings ?? [] as $label => $amount)
-            <li>{{ $label }}: {{ $amount }}</li>
-        @endforeach
-    </ul>
+            @if(!empty($payslip->earnings))
+                <h6 class="fw-bold">Earnings</h6>
+                <ul class="list-group mb-3">
+                    @foreach($payslip->earnings as $label => $amount)
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ $label }}</span>
+                            <span>KES {{ number_format($amount, 2) }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
 
-    <h5>Deductions</h5>
-    <ul>
-        @foreach($payslip->deductions ?? [] as $label => $amount)
-            <li>{{ $label }}: {{ $amount }}</li>
-        @endforeach
-    </ul>
+            @if(!empty($payslip->deductions))
+                <h6 class="fw-bold">Deductions</h6>
+                <ul class="list-group mb-3">
+                    @foreach($payslip->deductions as $label => $amount)
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ $label }}</span>
+                            <span>KES {{ number_format($amount, 2) }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
 
-    <p><strong>Notes:</strong> {{ $payslip->notes }}</p>
+            @if($payslip->notes)
+                <div class="mb-3">
+                    <h6 class="fw-bold">Notes</h6>
+                    <p class="text-muted">{{ $payslip->notes }}</p>
+                </div>
+            @endif
 
-    <a href="{{ route('payslips.download', $payslip) }}" class="btn btn-success">Download PDF</a>
+            <a href="{{ route('payslips.download', $payslip) }}" class="btn btn-outline-success">Download PDF</a>
+        </div>
+    </div>
 </div>
 @endsection

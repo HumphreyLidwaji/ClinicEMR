@@ -24,6 +24,12 @@
             @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
        <div class="mb-3 d-flex gap-2 flex-wrap">
                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                             data-bs-target="#addOrderModal" data-type="lab">
@@ -105,7 +111,7 @@
                                 </td>
                                 <td>{{ number_format($order->quantity * $order->price, 2) }}</td>
                                 <td>
-                                    {{ $order->{$group['relation']}->name ?? 'N/A' }}
+                                    
                                     @if($isBilled)
                                     <span class="badge bg-success">✔ Billed</span>
                                     @else

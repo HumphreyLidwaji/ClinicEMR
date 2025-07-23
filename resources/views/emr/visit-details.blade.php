@@ -27,13 +27,95 @@
                 @endif
             </div>
 
-            {{-- Consultation --}}
-            <div class="mb-4">
-                <h5 class="text-secondary">Consultation Notes</h5>
-                <div class="border rounded p-3 bg-light">
-                    {{ $visit->consultation->notes ?? 'No consultation notes available.' }}
-                </div>
-            </div>
+{{-- Consultation Section --}}
+<div class="mb-4">
+    <h5 class="text-secondary">Consultation Details</h5>
+
+    {{-- Notes --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>Notes:</strong><br>
+        @if($visitNotes->count())
+            @foreach($visitNotes as $note)
+                <p><strong>{{ $note->note_type }}:</strong> {!! nl2br(e($note->note)) !!}</p>
+            @endforeach
+        @else
+            <p>N/A</p>
+        @endif
+    </div>
+
+    {{-- Past History --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>Past History:</strong><br>
+        {{ $consultationHistory->past_history ?? 'N/A' }}
+    </div>
+
+    {{-- General Examination --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>General Examination:</strong><br>
+        {{ $consultationHistory->general_examination ?? 'N/A' }}
+    </div>
+
+    {{-- Systematic Examinations --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>Systematic Examinations:</strong><br>
+        @if($consultationSystematicExaminations->count())
+            <ul>
+                @foreach($consultationSystematicExaminations as $sysExam)
+                    <li>{{ $sysExam->systematicExamination->name ?? 'Unknown' }}</li>
+                @endforeach
+            </ul>
+        @else
+            N/A
+        @endif
+    </div>
+
+    {{-- Investigations --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>Investigation:</strong><br>
+        {{ $consultationHistory->investigation ?? 'N/A' }}
+    </div>
+
+    {{-- Diagnoses --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>Diagnosis:</strong><br>
+        @if($consultationDiagnoses->count())
+            <ul>
+                @foreach($consultationDiagnoses as $diag)
+                    <li>{{ $diag->diagnosis->name ?? 'Unknown' }} 
+                    @if($diag->note)
+                        - <em>{{ $diag->note }}</em>
+                    @endif
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            N/A
+        @endif
+    </div>
+
+    {{-- ICD-11 Diagnoses --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>ICD-11 Diagnosis:</strong><br>
+        @if($consultationICD11s->count())
+            <ul>
+                @foreach($consultationICD11s as $icd)
+                   <li>{{ $icd->icd11->code ?? 'Unknown' }} - {{ $icd->icd11->description ?? '' }}</li>
+
+                @endforeach
+            </ul>
+        @else
+            N/A
+        @endif
+    </div>
+
+    {{-- Treatment Plan --}}
+    <div class="border rounded p-3 bg-light mb-2">
+        <strong>Treatment Plan:</strong><br>
+        {{ $treatmentPlan ?? 'N/A' }}
+    </div>
+</div>
+
+
 
             {{-- Prescriptions --}}
             <div class="mb-4">
@@ -74,7 +156,12 @@
                     <ul class="list-group">
                         @foreach($visit->radiologyOrders as $rad)
                             <li class="list-group-item">
-                                {{ $rad->radiologyService->name }} — <span class="badge bg-info">{{ ucfirst($rad->status) }}</span>
+                             @if ($rad->radiologyService)
+    {{ $rad->radiologyService->name }} — <span class="badge bg-info">{{ ucfirst($rad->status) }}</span>
+@else
+    <span class="text-danger">Service not found</span> — <span class="badge bg-info">{{ ucfirst($rad->status) }}</span>
+@endif
+
                             </li>
                         @endforeach
                     </ul>

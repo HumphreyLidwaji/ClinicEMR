@@ -23,4 +23,9 @@ class Billing extends Model implements AuditableContract
     {
         return $this->belongsTo(Visit::class);
     }
+      // Relation to Patient
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }

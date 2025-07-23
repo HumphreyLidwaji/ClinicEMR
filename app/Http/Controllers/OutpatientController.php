@@ -24,15 +24,18 @@ class OutpatientController extends Controller
 {
     $patients = Patient::orderBy('last_name')->get();
     $doctors = Doctor::orderBy('name')->get();
+$visits = \App\Models\Visit::with('patient')
+    ->where('type', 'OPD')
+    ->get();
 
-    return view('outpatients.create', compact('patients', 'doctors'));
+    return view('outpatients.create', compact('patients', 'doctors','visits'));
 }
 
     // Approve outpatient visit (example action)
     public function approve($id)
     {
         $outpatient = Outpatient::findOrFail($id);
-        $outpatient->status = 'completed';
+        $outpatient->status = 'pending';
         $outpatient->save();
 
         return redirect()->route('outpatients.index')->with('success', 'Outpatient visit approved.');
@@ -56,20 +59,33 @@ class OutpatientController extends Controller
 }
 
 
-    public function store(Request $request)
+public function store(Request $request)
 {
     $validated = $request->validate([
-        'patient_id'  => 'required|exists:patients,id',
+        'visit_id'    => 'required|exists:visits,id',
+        'patient_id'  => 'nullable|exists:patients,id',
         'doctor_id'   => 'nullable|exists:doctors,id',
         'visit_date'  => 'required|date',
         'status'      => 'required|in:pending,completed',
     ]);
+
+    // Check if the visit already has status 'pending' in Outpatient
+    $alreadyPending = Outpatient::where('visit_id', $validated['visit_id'])
+        ->where('status', 'pending')
+        ->exists();
+
+    if ($alreadyPending) {
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'This visit already has a pending outpatient entry.');
+    }
 
     Outpatient::create($validated);
 
     return redirect()->route('outpatients.index')
         ->with('success', 'Outpatient registered successfully.');
 }
+
 
 public function update(Request $request, $id)
 {

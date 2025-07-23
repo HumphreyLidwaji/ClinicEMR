@@ -49,22 +49,26 @@
     </div>-->
 
 
-    {{-- Header --}}
-    @include('layouts.partials.header')
-    
+ 
     {{-- Sidebar --}}
-    @include('layouts.partials.sidebar')
+    
 
     <div class="mobile-menu-overlay"></div>
 
     <div class="main-container">
         <div class="xs-pd-20-10 pd-ltr-20">
+               {{-- Header --}}
+    @include('layouts.partials.header')
+    
+            {{-- Nav Card --}}
+@include('layouts.partials.nav-card')
             @yield('content')
+               {{-- Footer --}}
+    @include('layouts.partials.footer')
         </div>
     </div>
 
-    {{-- Footer --}}
-    @include('layouts.partials.footer')
+ 
 
     {{-- Welcome Modal --}}
     @include('layouts.partials.welcome-modal')

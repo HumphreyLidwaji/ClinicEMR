@@ -41,13 +41,23 @@ class OrderController extends Controller
         'procedure' => \App\Models\ProcedureOrder::class,
     };
 
-    $order = $orderClass::create([
-        'visit_id' => $visitId,
-        $type . '_id' => $item->id,
-        'quantity' => $quantity,
-        'price' => $item->price,
-        'status' => 'pending',
-    ]);
+  // Define the correct foreign key column per type
+$foreignKey = match ($type) {
+    'lab' => 'lab_test_id',
+    'radiology' => 'radiology_service_id',
+    'service' => 'service_id',
+    'procedure' => 'procedure_id',
+    default => abort(400, 'Invalid order type'),
+};
+
+$order = $orderClass::create([
+    'visit_id' => $visitId,
+    $foreignKey => $item->id,
+    'quantity' => $quantity,
+    'price' => $item->price,
+    'status' => 'pending',
+]);
+
 
     return redirect()->back()->with('success', ucfirst($type) . ' order added.');
 }
@@ -111,7 +121,16 @@ public function updateItem(Request $request, $type, $id)
     }
 
     // Update item reference and price
-    $order->{$type . '_id'} = $request->item_id;
+    $field = match ($type) {
+    'lab' => 'lab_test_id',
+    'radiology' => 'radiology_id',
+    'service' => 'service_id',
+    'procedure' => 'procedure_id',
+    default => abort(400, 'Invalid type'),
+};
+
+$order->{$field} = $request->item_id;
+
     $price = match ($type) {
         'lab' => \App\Models\LabTest::find($request->item_id)?->price,
         'radiology' => \App\Models\RadiologyService::find($request->item_id)?->price,

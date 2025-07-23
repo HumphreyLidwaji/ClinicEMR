@@ -58,7 +58,7 @@
                 @can('viewappointments')
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
-                        <span class="micon fas fa-calendar-check"></span>
+                        <span class="fas fa-calendarz"></span>
                         <span class="mtext">Appointments</span>
                     </a>
                     <ul class="submenu">
@@ -99,30 +99,39 @@
                 </li>
                 @endcan
                 <!-- Inpatient -->
+                @can('view_admissions')
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon fas fa-procedures"></span>
                         <span class="mtext">Inpatient</span>
                     </a>
                     <ul class="submenu">
+                    @can('list_admissions')
                         <li><a href="{{ route('admissions.index') }}">All Admissions</a></li>
+                    @endcan
+                      @can('add_admissions')
                         <li><a href="{{ route('admissions.create') }}">New Admission</a></li>
-
+                     @endcan
                     </ul>
                 </li>
+                 @endcan
                 <!-- Outpatient -->
+                 @can('view_outpatient')
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon fas fa-procedures"></span>
                         <span class="mtext">Outpatient </span>
                     </a>
                     <ul class="submenu">
+                      @can('list_outpatients')
                         <li><a href="{{ route('outpatients.index') }}">All Outpatient</a></li>
+                        @endcan
+                         @can('add_outpatient')
                         <li><a href="{{ route('outpatients.create') }}">New Outpatient</a></li>
-
+                        @endcan
                     </ul>
                 </li>
-
+                @endcan
                 <!-- Maternity -->
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
@@ -469,6 +478,8 @@
                         </li>
                     </ul>
                 </li>
+
+                
             </ul>
         </div>
     </div>

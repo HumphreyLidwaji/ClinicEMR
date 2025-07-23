@@ -72,24 +72,7 @@ $visit = Visit::create([
     'visit_number'  => $visitNumber,
 ]);
 
-// Log the visit creation
-AuditLog::create([
-    'user_id'        => auth()->id(),
-    'action'         => 'Created a Visit',
-    'auditable_type' => Visit::class,
-    'auditable_id'   => $visit->id,
-    'old_values'     => null,
-    'new_values'     => json_encode([
-        'visit_number'   => $visitNumber,
-        'patient_id'     => $request->patient_id,
-        'doctor_id'      => $request->doctor_id,
-        'department_id'  => $request->department_id,
-        'type'           => $request->type,
-        'start_date'     => $request->start_date,
-        'is_active'      => $request->is_active,
-    ]),
-    'ip_address' => request()->ip(),
-]);
+
 
    
 
@@ -114,19 +97,7 @@ if (!$hasInvoice) {
         'status'         => 'Unpaid',
     ]);
 
-    // Log the invoice creation
-    AuditLog::create([
-        'user_id'        => auth()->id(),
-        'action'         => 'Created an Invoice for Visit',
-        'auditable_type' => Invoice::class,
-        'auditable_id'   => $invoice->id,
-        'old_values'     => null,
-        'new_values'     => json_encode([
-            'invoice_number' => $invoiceNumber,
-            'amount' => 0,
-        ]),
-        'ip_address'     => request()->ip(),
-    ]);
+
 }
 
 

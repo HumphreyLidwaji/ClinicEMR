@@ -6,7 +6,11 @@ use App\Models\Admission;
 use App\Models\TransferHistory;
 use App\Models\Patient;
 use App\Models\Visit;
+use App\Models\Bed;
+use App\Models\Billing\InvoiceItem;
+use App\Models\Billing\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdmissionController extends Controller
 {
@@ -26,24 +30,33 @@ $visits = \App\Models\Visit::with('patient')
         return view('inpatient.admissions.create', compact('patients', 'visits'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'patient_id' => 'required|exists:patients,id',
-            'visit_id' => 'required|exists:visits,id',
-            'notes' => 'nullable|string',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'visit_id' => 'required|exists:visits,id',
+        'notes' => 'nullable|string',
+    ]);
 
-        Admission::create([
-            'patient_id' => $request->patient_id,
-            'visit_id' => $request->visit_id,
-            'requested_by' => auth()->id(),
-            'status' => 'pending',
-            'notes' => $request->notes,
-        ]);
+// Check if there's already an admission with status 'admitted' or 'pending' for this visit
+$alreadyAdmitted = Admission::where('visit_id', $request->visit_id)
+    ->whereIn('status', ['admitted', 'pending'])
+    ->exists();
 
-        return redirect()->route('admissions.index')->with('success', 'Admission request created.');
-    }
+if ($alreadyAdmitted) {
+    return redirect()->back()->with('error', 'This visit already has an active admission.');
+}
+
+    Admission::create([
+        'visit_id' => $request->visit_id,
+        'requested_by' => auth()->id(),
+        'status' => 'pending',
+        'notes' => $request->notes,
+       
+    ]);
+
+    return redirect()->route('admissions.index')->with('success', 'Admission request created.');
+}
+
 
     
 public function approve($id)
@@ -64,31 +77,71 @@ $wards = \App\Models\Ward::all();
 
 
 
-
 public function assignBed(Request $request, $id)
 {
     $request->validate([
         'bed_id' => 'required|exists:beds,id',
         'ward_id' => 'required|exists:wards,id',
     ]);
+
     $admission = Admission::findOrFail($id);
 
-    // Check if a bed is already assigned
     if ($admission->bed_id) {
-        return redirect()->route('admissions.index')->with('error', 'A bed is already assigned to this admission.');
+        return redirect()->route('admissions.index')->with('error', 'A bed is already assigned.');
     }
 
-    $admission->bed_id = $request->bed_id;
-    $admission->ward_id = $request->ward_id;
-    $admission->save();
+    DB::beginTransaction();
 
-    // Mark the bed as occupied
-    $bed = \App\Models\Bed::findOrFail($request->bed_id);
-    $bed->status = 'occupied';
-    $bed->save();
+    try {
+        // Assign bed and ward
+        $admission->bed_id = $request->bed_id;
+        $admission->ward_id = $request->ward_id;
+        $admission->save();
 
-    return redirect()->route('admissions.index')->with('success', 'Bed and ward assigned.');
+        // Mark the bed as occupied
+        $bed = Bed::findOrFail($request->bed_id);
+        $bed->status = 'occupied';
+
+        if (!$bed->save()) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update bed status.');
+        }
+
+        // Retrieve or create invoice
+        $visitId = $admission->visit_id;
+        $invoice = Invoice::firstOrCreate(
+            ['visit_id' => $visitId],
+            ['amount' => 0, 'amount_paid' => 0, 'balance_due' => 0]
+        );
+
+        // Add invoice item for bed
+        $bedCharge = $bed->charge ?? 0;
+
+        InvoiceItem::create([
+            'invoice_id' => $invoice->id,
+            'description' => 'Bed Assignment - ' . $bed->name,
+            'quantity' => 1,
+            'unit_price' => $bedCharge,
+            'total' => $bedCharge,
+            'category' => 'bed',
+        ]);
+
+        // Update invoice totals
+        $totalAmount = $invoice->items()->sum('total');
+        $invoice->amount = $totalAmount;
+        $invoice->balance_due = $totalAmount - $invoice->amount_paid;
+        $invoice->save();
+
+        DB::commit();
+
+        return redirect()->route('admissions.index')->with('success', 'Bed and ward assigned and billed.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Bed assignment error: ' . $e->getMessage());
+        return back()->with('error', 'An error occurred: ' . $e->getMessage());
+    }
 }
+
 
 
 public function showTransfer($id)

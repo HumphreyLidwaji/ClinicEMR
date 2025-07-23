@@ -4,7 +4,7 @@
 @section('title', 'New Visit')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container py-4">
     <div class="card-box bg-white box-shadow border-radius-10">
         <div class="pd-20">
             <h1 class="h4 mb-4">{{ __('Start a New Visit') }}</h1>

@@ -86,18 +86,41 @@
                 {{-- CONSULTATION TAB --}}
                 <div class="tab-pane fade show active" id="consultation" role="tabpanel"
                     aria-labelledby="consultation-tab">
-                    <form method="POST" action="{{ route('consultation.store') }}">
+
+                    {{-- Base Consultation ID --}}
+                    <input type="hidden" name="visit_id" value="{{ $visit->id }}">
+                   
+
+                    {{-- SECTION 1: Note Entry --}}
+                    <form method="POST" action="{{ route('consultation.note.store') }}">
                         @csrf
-                        <input type="hidden" name="visit_id" value="{{ $visit->id }}">
-
-
+                        <input type="hidden" name="consultation_id" value="{{ $consultation->id ?? '' }}">
+                        <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">{{ __('Consultation Notes') }}</label>
-                                <textarea name="notes" rows="3" class="form-control" required></textarea>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ __('Note Type') }}</label>
+                                <select name="note_type" class="form-control" required>
+                                    <option value="">Select type...</option>
+                                    <option value="progress">Progress Note</option>
+                                    <option value="history_physical">History & Physical</option>
+                                    <option value="consult">Consult Note</option>
+                                    <option value="procedure">Procedure Note</option>
+                                    <option value="nursing">Nursing Note</option>
+                                </select>
+                            </div>
+                            <div class="col-md-9">
+                                <label class="form-label">{{ __('Note Content') }}</label>
+                                <textarea name="note" class="form-control" required></textarea>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-success mb-4">Save Note</button>
+                    </form>
 
+                    {{-- SECTION 2: History & Physical --}}
+                    <form method="POST" action="{{ route('consultation.history.store') }}">
+                        @csrf
+
+                        <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
                         <div class="form-section-title">Clinical Details</div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -109,47 +132,90 @@
                                 <textarea name="general_examination" rows="2" class="form-control"></textarea>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Systematic Examination</label>
-                                <select name="systematic_examination" class="form-control select2">
-                                    <option value="">Select finding...</option>
-                                    @foreach($systematics as $se)
-                                    <option value="{{ $se->name }}">{{ $se->system }} — {{ $se->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Investigation</label>
                                 <textarea name="investigation" rows="2" class="form-control"></textarea>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Diagnosis</label>
-                                <select name="diagnosis" class="form-control select2">
-                                    <option value="">Select clinical diagnosis...</option>
-                                    @foreach($diagnoses as $dx)
-                                    <option value="{{ $dx->name }}">{{ $dx->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success mb-4">Save History</button>
+                    </form>
 
+                    {{-- SECTION 3: Systematic Examination --}}
+                    <form method="POST" action="{{ route('consultation.systematic.store') }}">
+                        @csrf
+                        <input type="hidden" name="consultation_id" value="{{ $consultation->id ?? '' }}">
+                        <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
+                        <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">ICD11 Diagnosis</label>
-                                <select name="icd11_diagnosis" class="form-control select2" required>
-                                    <option value="">Search ICD11 Diagnosis...</option>
-                                    @foreach($icd11s as $icd)
-                                    <option value="{{ $icd->code }} - {{ $icd->description }}">{{ $icd->code }} -
-                                        {{ $icd->description }}</option>
+                                <label class="form-label">Systematic Examination</label>
+                                <select name="systematic_examination_id" class="form-control select2" required>
+                                    <option value="">Select finding...</option>
+                                    @foreach($systematics as $se)
+                                    <option value="{{ $se->id }}">{{ $se->system }} — {{ $se->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Treatment Plan</label>
-                                <textarea name="treatment_plan" rows="2" class="form-control"></textarea>
                             </div>
                         </div>
-
-                        <button type="submit" class="btn btn-primary mt-2">{{ __('Save Consultation') }}</button>
+                        <button type="submit" class="btn btn-success mb-4">Save Systematic Exam</button>
                     </form>
+
+                    {{-- SECTION 4: Clinical Diagnosis --}}
+                    <form method="POST" action="{{ route('consultation.diagnosis.store') }}">
+                        @csrf
+                        <input type="hidden" name="consultation_id" value="{{ $consultation->id ?? '' }}">
+                        <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Diagnosis</label>
+                                <select name="diagnosis_id" class="form-control select2" required>
+                                    <option value="">Select clinical diagnosis...</option>
+                                    @foreach($diagnoses as $dx)
+                                    <option value="{{ $dx->id }}">{{ $dx->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="note">Note (optional):</label>
+                                <textarea name="note" class="form-control" rows="2"></textarea>
+
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success mb-4">Save Diagnosis</button>
+                    </form>
+
+                    {{-- SECTION 5: ICD-11 Diagnosis --}}
+                    <form method="POST" action="{{ route('consultation.icd11.store') }}">
+                        @csrf
+                        <input type="hidden" name="consultation_id" value="{{ $consultation->id ?? '' }}">
+                        <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">ICD11 Diagnosis</label>
+                                <select name="icd11_code_id" class="form-control select2" required>
+                                    <option value="">Search ICD11 Diagnosis...</option>
+                                    @foreach($icd11s as $icd)
+                                    <option value="{{ $icd->id }}">{{ $icd->code }} — {{ $icd->description }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success mb-4">Save ICD11</button>
+                    </form>
+
+                    {{-- SECTION 6: Treatment Plan --}}
+                    <form method="POST" action="{{ route('consultation.plan.store') }}">
+                        @csrf
+                        <input type="hidden" name="consultation_id" value="{{ $consultation->id ?? '' }}">
+                        <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Treatment Plan</label>
+                                <textarea name="treatment_plan" rows="2" class="form-control" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Treatment Plan</button>
+                    </form>
+
                 </div>
 
                 {{-- VITALS TAB --}}
@@ -291,10 +357,8 @@
                             <h1 class="h4 mb-4">{{ __('Order Labs') }}</h1>
                             <form method="POST" action="{{ route('lab-orders.store') }}">
                                 @csrf
-                                 <input type="text" name="visit_id" value="{{ $visit->id }}">
+                           <input type="hidden" name="visit_id" value="{{ $visit->id }}">
                                 <input type="hidden" name="billing_type" value="labs">
-
-                                <input type="hidden" name="visit_id" value="{{ $visit->visit_id }}">
                                 <div class="mb-3">
                                     <label for="labs_services" class="form-label">{{ __('Lab Tests') }}</label>
                                     <select name="services[]" id="labs_services" class="form-select select2" multiple
@@ -327,8 +391,7 @@
 
                                 @csrf
                                 <input type="hidden" name="billing_type" value="radiology">
-
-                                <input type="hidden" name="visit_id" value="{{ $visit->visit_id }}">
+<input type="hidden" name="visit_id" value="{{ $visit->id }}">
                                 <div class="mb-3">
                                     <label for="radiology_services"
                                         class="form-label">{{ __('Radiology Services') }}</label>
@@ -362,7 +425,7 @@
                                 @csrf
                                 <input type="hidden" name="billing_type" value="services">
 
-                                <input type="hidden" name="visit_id" value="{{ $visit->visit_id }}">
+                               <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
                                 <div class="mb-3">
                                     <label for="services_services"
                                         class="form-label">{{ __('Services / Items') }}</label>
@@ -396,7 +459,7 @@
                             <form method="POST" action="{{ route('procedure-orders.store') }}">
                                 @csrf
                                 <input type="hidden" name="billing_type" value="procedures">
-                                <input type="hidden" name="visit_id" value="{{ $visit->visit_id }}">
+                               <input type="hidden" name="visit_id" value="{{ $visit->id ?? '' }}">
                                 <div class="mb-3">
                                     <label for="procedures_services" class="form-label">{{ __('Procedures') }}</label>
                                     <select name="services[]" id="procedures_services" class="form-select select2"

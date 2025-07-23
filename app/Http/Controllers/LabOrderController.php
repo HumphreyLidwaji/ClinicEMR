@@ -38,7 +38,7 @@ public function store(Request $request)
         $lab = \App\Models\LabTest::find($labTestId);
         \App\Models\LabOrder::create([
             'visit_id' => $request->visit_id,
-            'lab_id' => $labTestId,
+            'lab_test_id' => $labTestId,
             'quantity' => 1,
             'price' => $lab->price,
             'status' => 'pending',

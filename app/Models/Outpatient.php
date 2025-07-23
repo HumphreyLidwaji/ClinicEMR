@@ -11,7 +11,7 @@ class Outpatient extends Model implements AuditableContract
 {
       use Auditable;
     protected $fillable = [
-        'patient_id',
+        'visit_id',
         'doctor_id',
         'visit_date',
         'status',
@@ -22,7 +22,10 @@ class Outpatient extends Model implements AuditableContract
 protected $casts = [
     'visit_date' => 'date',
 ];
-
+  public function visit()
+    {
+        return $this->belongsTo(Visit::class);
+    }
     // Relation to Patient
     public function patient()
     {

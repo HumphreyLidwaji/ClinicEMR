@@ -11,7 +11,7 @@ class Admission  extends Model implements AuditableContract
     use HasFactory;
 
     protected $fillable = [
-        'patient_id', 'visit_id', 'requested_by', 'approved_by', 'bed_id',
+         'visit_id', 'requested_by', 'approved_by', 'bed_id',
         'admission_date', 'discharge_date', 'status', 'notes'
     ];
     protected $casts = [

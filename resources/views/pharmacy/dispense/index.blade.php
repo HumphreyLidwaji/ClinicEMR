@@ -2,12 +2,11 @@
 
 @section('content')
 <div class="container">
-
     <h4 class="mb-4">💊 Dispense Medications to Patients</h4>
 
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs mb-4" id="visitTabs" role="tablist">
-        @foreach(['OPD', 'IP', 'Emergency '] as $type)
+        @foreach(['OPD', 'IP', 'Emergency'] as $type)
         <li class="nav-item" role="presentation">
             <button class="nav-link @if($loop->first) active @endif"
                     data-bs-toggle="tab"
@@ -71,7 +70,7 @@
         @endforeach
     </div>
 
-    <!-- ALL Modals Placed Here (OUTSIDE the tables!) -->
+    <!-- Modals -->
     @foreach($visits as $visit)
         @php
             $rxList = $visit->prescriptions->where('dispensed', false);
@@ -103,8 +102,9 @@
                                             <th>Dosage</th>
                                             <th>Duration</th>
                                             <th>Qty</th>
-                                             <th>To Dispense</th>
+                                            <th>To Dispense</th>
                                             <th>Unit Price (KES)</th>
+                                            <th>Dispensed</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -112,41 +112,38 @@
                                         <tr>
                                             <td>{{ $k + 1 }}</td>
                                             <td>{{ $rx->drug->name }}</td>
-                                           <td>{{ $rx->dosage->name ?? 'Not found' }}</td>
-
+                                            <td>{{ $rx->dosage->name ?? 'Not found' }}</td>
                                             <td>{{ $rx->duration }}</td>
                                             <td>{{ $rx->quantity }}</td>
-                                       <td>
-    <input type="number"
-           name="items[{{ $k }}][quantity]"
-           value="{{ $rx->quantity }}"
-           class="form-control form-control-sm"
-           min="1"
-           required>
-</td>
-<td>
-    <input type="hidden" name="items[{{ $k }}][prescription_id]" value="{{ $rx->id }}">
-    <input type="hidden" name="items[{{ $k }}][drug_id]" value="{{ $rx->drug->id }}">
-
-    <input type="number"
-           name="items[{{ $k }}][price]"
-           step="0.01"
-           class="form-control form-control-sm"
-           required>
-</td>
-<td>
-    <div class="form-check">
-        <input type="checkbox"
-               class="form-check-input"
-               name="items[{{ $k }}][dispensed]"
-               id="dispensedCheck{{ $rx->id }}"
-               value="1">
-        <label class="form-check-label" for="dispensedCheck{{ $rx->id }}">
-            Dispensed
-        </label>
-    </div>
-</td>
-
+                                            <td>
+                                                <input type="number"
+                                                       name="items[{{ $k }}][quantity]"
+                                                       value="{{ $rx->quantity }}"
+                                                       class="form-control form-control-sm"
+                                                       min="1"
+                                                       required>
+                                            </td>
+                                            <td>
+                                                <input type="hidden" name="items[{{ $k }}][prescription_id]" value="{{ $rx->id }}">
+                                                <input type="hidden" name="items[{{ $k }}][drug_id]" value="{{ $rx->drug->id }}">
+                                                <input type="number"
+                                                       name="items[{{ $k }}][price]"
+                                                       step="0.01"
+                                                       class="form-control form-control-sm"
+                                                       required>
+                                            </td>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input type="checkbox"
+                                                           class="form-check-input"
+                                                           name="items[{{ $k }}][dispensed]"
+                                                           id="dispensedCheck{{ $rx->id }}"
+                                                           value="1">
+                                                    <label class="form-check-label" for="dispensedCheck{{ $rx->id }}">
+                                                        Dispensed
+                                                    </label>
+                                                </div>
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -160,6 +157,7 @@
                             </div>
                         </form>
                     </div>
+
                 </div>
             </div>
         </div>

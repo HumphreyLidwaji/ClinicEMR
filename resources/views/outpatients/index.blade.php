@@ -5,7 +5,7 @@
     <div class="card shadow-sm">
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0 text-white">All Outpatients</h4>
-            <a href="{{ route('outpatients.create') }}" class="btn btn-light btn-sm">New Registration</a>
+         @can('add_outpatient')    <a href="{{ route('outpatients.create') }}" class="btn btn-light btn-sm">New Registration</a> @endcan
         </div>
         <div class="card-body p-0">
             @if(session('success'))
@@ -27,7 +27,7 @@
                         @foreach($outpatients as $outpatient)
                         <tr>
                             <td>{{ $outpatient->id }}</td>
-                            <td>{{ $outpatient->patient->name ?? '-' }}</td>
+                            <td>{{ $outpatient->patient->last_name ?? '-' }}</td>
                             <td>{{ $outpatient->visit_date->format('d M Y') ?? '-' }}</td>
                             <td>
                                 <span class="badge bg-{{ $outpatient->status == 'pending' ? 'warning' : ($outpatient->status == 'completed' ? 'success' : 'secondary') }}">
@@ -39,17 +39,17 @@
     @if($outpatient->status == 'pending')
         <form action="{{ route('outpatients.approve', $outpatient->id) }}" method="POST" style="display:inline;">
             @csrf
-            <button class="btn btn-sm btn-success mb-1">Approve</button>
+           @can('approve_outpatient')  <button class="btn btn-sm btn-success mb-1">Approve</button> @endcan
         </form>
     @endif
 
     <a href="{{ route('outpatients.show', $outpatient->id) }}" class="btn btn-info btn-sm mb-1">View</a>
-    <a href="{{ route('outpatients.edit', $outpatient->id) }}" class="btn btn-primary btn-sm mb-1">Edit</a>
+     @can('edit_outpatient') <a href="{{ route('outpatients.edit', $outpatient->id) }}" class="btn btn-primary btn-sm mb-1">Edit</a>@endcan
 
     {{-- 🆕 Consult Button --}}
-<a href="{{ route('consultation.create') }}?visit_id={{ $outpatient->visit->id ?? $outpatient->id }}" class="btn btn-secondary btn-sm mb-1">
+ @can('outpatient_consultation') <a href="{{ route('consultation.create') }}?visit_id={{ $outpatient->visit->id ?? $outpatient->id }}" class="btn btn-secondary btn-sm mb-1">
     Consult
-</a>
+</a> @endcan
 
 
 </td>

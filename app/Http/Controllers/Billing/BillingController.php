@@ -64,7 +64,7 @@ public function show($id)
 public function showVisitOrders($visitId)
 {
     $visit = Visit::findOrFail($visitId);
-
+   
     $labOrders = LabOrder::where('visit_id', $visitId)->where('status', 'pending')->get();
     $radiologyOrders = RadiologyOrder::where('visit_id', $visitId)->where('status', 'pending')->get();
     $serviceOrders = ServiceOrder::where('visit_id', $visitId)->where('status', 'pending')->get();
@@ -86,13 +86,24 @@ public function billSelectedOrders(Request $request, $visitId)
         'prices' => 'required|array',
     ]);
 
-    $visit = Visit::findOrFail($visitId);
+  $visit = Visit::findOrFail($visitId);
 
-    // Find or create an active invoice
-    $invoice = Invoice::firstOrCreate(
-        ['visit_id' => $visitId, 'status' => 'Unpaid'],
-        ['patient_id' => $visit->patient_id]
-    );
+// Check if an invoice with 'Paid' status already exists
+$existingInvoice = Invoice::where('visit_id', $visitId)
+                           ->where('status', 'Paid')
+                           ->first();
+
+if ($existingInvoice) {
+    return redirect()->back()->with('error', 'Invoice has already been Paid/Closed for this visit.');
+}
+
+
+// Find or create an active invoice with 'Unpaid' status
+$invoice = Invoice::firstOrCreate(
+    ['visit_id' => $visitId, 'status' => 'Unpaid'],
+    ['patient_id' => $visit->patient_id]
+);
+
 
     // Auto-generate invoice number if not present
     if (!$invoice->invoice_number) {

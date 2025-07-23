@@ -3,19 +3,29 @@
 namespace App\Http\Controllers\Consultation;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admission;
-use App\Models\Icd11;
 use Illuminate\Http\Request;
-use App\Models\Consultation;
-use App\Models\LabTest;
-use App\Models\RadiologyService;
-use App\Models\Visit;
-use App\Models\Drug;
-use App\Models\User;
-use App\Models\Service;
-use App\Models\RouteModel;
-use App\Models\Dosage;
-use App\Models\Procedure;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\{
+    Consultation,
+    ConsultationHistory,
+    ConsultationSystematic,
+    ConsultationDiagnosis,
+    ConsultationICD11,
+    Visit,
+    SystematicExamination,
+    ClinicalDiagnosis,
+    Icd11,
+    Drug,
+    Dosage,
+    RouteModel,
+    LabTest,
+    RadiologyService,
+    Service,
+    Procedure,
+    User,
+    Admission
+};
 
 
 use Spatie\Permission\Models\Role;
@@ -26,77 +36,78 @@ use Spatie\Permission\Models\Role;
 
 class ConsultationController extends Controller
 {
- 
 public function index()
+    {
+        $consultations = Consultation::whereHas('visit', fn($q) => $q->where('type', 'OPD'))
+            ->with('visit.patient')
+            ->latest()
+            ->paginate(10);
+
+        return view('visits.consultation.index', compact('consultations'));
+    }
+
+    public function create(Request $request)
+    {
+        $visit = Visit::findOrFail($request->query('visit_id'));
+
+        $icd11s = ICD11::all();
+        $drugs = Drug::all();
+        $dosages = Dosage::all();
+        $routes = RouteModel::all();
+        $labs = LabTest::all();
+        $radiology = RadiologyService::all();
+        $services = Service::all();
+        $procedures = Procedure::all();
+        $systematics = SystematicExamination::all();
+        $diagnoses = ClinicalDiagnosis::all();
+
+        return view('outpatients.consultation.create', compact(
+            'visit', 'icd11s', 'drugs', 'dosages', 'routes',
+            'labs', 'radiology', 'services', 'procedures', 'systematics', 'diagnoses'
+        ));
+    }
+
+    // Save clinical history (past history, general exam, investigation)
+public function storeHistory(Request $request)
 {
-    // Only show consultations for OPD visits
-    $consultations = \App\Models\Consultation::whereHas('visit', function($query) {
-        $query->where('type', 'OPD');
-    })->with('visit.patient')->latest()->paginate(10);
-    return view('visits.consultation.index', compact('consultations'));
+    
+    $request->validate([
+        'visit_id' => 'required|exists:visits,id',
+        'past_history' => 'nullable|string',
+        'general_examination' => 'nullable|string',
+        'investigation' => 'nullable|string',
+    ]);
+
+    // Assuming you have a model ConsultationHistory
+    \App\Models\ConsultationHistory::create([
+         'visit_id' => $request->visit_id,
+        'past_history' => $request->past_history,
+        'general_examination' => $request->general_examination,
+        'investigation' => $request->investigation,
+        'user_id' => auth()->id(), // Track who added it
+    ]);
+
+    return redirect()->back()->with('success', 'History and Physical saved successfully.');
 }
 
-public function create(Request $request)
-{
-    $visitId = $request->query('visit_id');
-    $visit = Visit::find($visitId);
-
-    $icd11s   = ICD11::all();
-    $drugs    = Drug::all();        // 💊 Needed for medication tab
-    $dosages  = Dosage::all();      // 📏 Dosage options
-    $routes   = RouteModel::all();       // 🚚 Route of administration
-    $labs     = LabTest::all();  // 🧪 Lab services
-    $radiology = RadiologyService::all(); // 🖼️ Imaging
-    $services = Service::all();     // 💼 General services
-    $procedures = Procedure::all(); // 🛠️ Procedures
-$systematics = \App\Models\SystematicExamination::all();
-$diagnoses = \App\Models\ClinicalDiagnosis::all(); // or use ICD model
-
-
-    return view('outpatients.consultation.create', compact(
-        'visit', 'icd11s', 'drugs', 'dosages', 'routes',
-        'labs', 'radiology', 'services', 'procedures','systematics', 'diagnoses'
-    ));
-}
-
-
-
-
-public function store(Request $request)
+    // Add or update systematic examination (multiple allowed)
+public function storeSystematic(Request $request)
 {
     $request->validate([
-        'visit_id'              => 'required|exists:visits,id',
-        'notes'                 => 'required|string',
-        'past_history'          => 'nullable|string',
-        'general_examination'   => 'nullable|string',
-        'systematic_examination'=> 'nullable|string',
-        'investigation'         => 'nullable|string',
-        'diagnosis'             => 'nullable|string',
-        'icd11_diagnosis'       => 'nullable|string',
-        'treatment_plan'        => 'nullable|string',
+      'visit_id' => 'required|exists:visits,id',
+        'systematic_examination_id' => 'required|exists:systematic_examinations,id',
     ]);
 
-    Consultation::create([
-        'visit_id'              => $request->visit_id,
-        'notes'                 => $request->notes,
-        'past_history'          => $request->past_history,
-        'general_examination'   => $request->general_examination,
-        'systematic_examination'=> $request->systematic_examination,
-        'investigation'         => $request->investigation,
-        'diagnosis'             => $request->diagnosis,
-        'icd11_diagnosis'       => $request->icd11_diagnosis,
-        'treatment_plan'        => $request->treatment_plan,
+    \App\Models\ConsultationSystematicExamination::create([
+        'visit_id' => $request->visit_id,
+        'systematic_examination_id' => $request->systematic_examination_id,
+        'user_id' => auth()->id(),
     ]);
 
-    return redirect()->route('visits.index')->with('success', 'Consultation notes saved successfully.');
+    return redirect()->back()->with('success', 'Systematic Examination saved successfully.');
 }
 
-
-public function createNote()
-{
-    $visits = \App\Models\Visit::with('patient')->get();
-    return view('visits.consultation.note.create', compact('visits'));
-}
+    //savenote
 public function storeNote(Request $request)
 {
     $request->validate([
@@ -109,11 +120,70 @@ public function storeNote(Request $request)
         'visit_id' => $request->visit_id,
         'note_type' => $request->note_type,
         'note' => $request->note,
-        'user_id' => auth()->id(), // optional: track who added the note
+        'user_id' => auth()->id(), // track who added the note
     ]);
 
     return redirect()->back()->with('success', 'Note added successfully.');
 }
+
+    // Add diagnosis (multiple allowed)
+public function storeDiagnosis(Request $request)
+{
+    $request->validate([
+        'visit_id' => 'required|exists:visits,id',
+        'diagnosis_id' => 'required|exists:clinical_diagnoses,id',
+        'note' => 'nullable|string',
+    ]);
+
+    \App\Models\ConsultationDiagnosis::create([
+        'visit_id' => $request->visit_id,
+        'diagnosis_id' => $request->diagnosis_id,
+        'note' => $request->note,
+        'user_id' => auth()->id(),
+    ]);
+
+    return redirect()->back()->with('success', 'Diagnosis saved successfully.');
+}
+
+
+
+    // Add ICD11 diagnosis (multiple allowed)
+public function storeICD11(Request $request)
+{
+    $request->validate([
+       'visit_id' => 'required|exists:visits,id',
+        'icd11_code_id' => 'required|exists:icd11s,id',
+    ]);
+
+    \App\Models\ConsultationICD11::create([
+           'visit_id' => $request->visit_id,
+        'icd11_code_id' => $request->icd11_code_id,
+        'user_id' => auth()->id(),
+    ]);
+
+    return redirect()->back()->with('success', 'ICD11 Diagnosis saved successfully.');
+}
+//store treatment plan
+
+public function storePlan(Request $request)
+{
+    $request->validate([
+        'visit_id' => 'required|exists:visits,id',
+        'treatment_plan' => 'required|string',
+    ]);
+
+    // Find the consultation linked to the visit
+    $consultation = \App\Models\Consultation::where('visit_id', $request->visit_id)->firstOrFail();
+
+    $consultation->treatment_plan = $request->treatment_plan;
+    $consultation->user_id = auth()->id(); // track who updated
+    $consultation->save();
+
+    return redirect()->back()->with('success', 'Treatment plan saved successfully.');
+}
+
+
+
 
 
 public function createForAdmission($admission_id)

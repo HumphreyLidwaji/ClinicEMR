@@ -124,7 +124,9 @@ Route::resource('payslips', PayslipController::class);
 Route::get('payslips/{payslip}/download', [PayslipController::class, 'download'])->name('payslips.download');
 Route::resource('deductions', DeductionController::class);
 Route::resource('rosters', RosterController::class);
-
+Route::post('/rosters/bulk-assign', [RosterController::class, 'bulkAssign'])->name('rosters.bulkAssign');
+Route::get('/rosters/print/department', [RosterController::class, 'printByDepartment'])->name('rosters.print.department');
+Route::get('/rosters/print/individual', [RosterController::class, 'printIndividual'])->name('rosters.print.individual');
 
 
 //county
@@ -159,13 +161,14 @@ Route::resource('insurances', \App\Http\Controllers\InsuranceController::class)-
 Route::get('patients/attachments/create', [PatientAttachmentController::class, 'create'])->name('patients.attachments.create');
 Route::post('patients/attachments', [PatientAttachmentController::class, 'store'])->name('patients.attachments.store');
 //appointment
-Route::resource('appointments', AppointmentController::class);
+Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
 Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
 Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+Route::get('appointments/{id}', [AppointmentController::class, 'show'])->name('appointments.show');
 Route::get('appointments/{id}/edit', [AppointmentController::class, 'edit'])->name('appointments.edit');
 Route::put('appointments/{id}', [AppointmentController::class, 'update'])->name('appointments.update');
 Route::delete('appointments/{id}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
-Route::get('appointments/{id}', [AppointmentController::class, 'show'])->name('appointments.show');
+
 Route::put('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 Route::post('appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
 Route::post('appointments/{id}/start', [AppointmentController::class, 'start'])->name('appointments.start');
@@ -199,6 +202,13 @@ Route::get('admissions/{id}/assign-bed', [AdmissionController::class, 'showAssig
 Route::post('admissions/{id}/assign-bed', [AdmissionController::class, 'assignBed'])->name('admissions.assignBed');
 
 });
+use App\Http\Controllers\InpatientController;
+
+Route::prefix('inpatient')->name('inpatient.')->group(function () {
+    Route::post('/consultation', [InpatientController::class, 'storeConsultation'])->name('consultation.store');
+    Route::post('/progress', [InpatientController::class, 'storeProgress'])->name('progress.store');
+    Route::post('/nursing', [InpatientController::class, 'storeNursing'])->name('nursing.store');
+});
 
 
 Route::get('inpatient/admissions/{id}/transfer', [AdmissionController::class, 'showTransfer'])->name('admissions.showTransfer');
@@ -226,10 +236,17 @@ Route::get('/inpatient-consultation/create/{admission_id}', [ConsultationControl
 Route::get('visits/vitals/create', [VitalController::class, 'create'])->name('visits.vitals.create');
 Route::post('visits/vitals', [VitalController::class, 'store'])->name('visits.vitals.store');
 // Consultation routes (linked to visits)
+Route::post('/consultation/note/store', [ConsultationController::class, 'storeNote'])->name('consultation.note.store');
+Route::post('/consultation/history/store', [ConsultationController::class, 'storeHistory'])->name('consultation.history.store');
+Route::post('/consultation/systematic/store', [ConsultationController::class, 'storeSystematic'])->name('consultation.systematic.store');
+Route::post('/consultation/diagnosis/store', [ConsultationController::class, 'storeDiagnosis'])->name('consultation.diagnosis.store');
+Route::post('/consultation/icd11/store', [ConsultationController::class, 'storeICD11'])->name('consultation.icd11.store');
+Route::post('/consultation/plan/store', [ConsultationController::class, 'storePlan'])->name('consultation.plan.store');
+
 Route::prefix('consultation')->middleware(['auth'])->group(function () {
     Route::get('/', [ConsultationController::class, 'index'])->name('consultation.index');
     Route::get('/create', [ConsultationController::class, 'create'])->name('consultation.create');
-    Route::post('/', [ConsultationController::class, 'store'])->name('consultation.store');
+  
     Route::get('/{id}/edit', [ConsultationController::class, 'edit'])->name('consultation.edit');
     Route::put('/{id}', [ConsultationController::class, 'update'])->name('consultation.update');
     Route::delete('/{id}', [ConsultationController::class, 'destroy'])->name('consultation.destroy');

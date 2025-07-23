@@ -15,7 +15,7 @@ class LabOrder extends Model implements AuditableContract
 
     protected $fillable = [
         'visit_id',
-        'lab_id',
+        'lab_test_id',
         'quantity',
         'price',
         'status',
@@ -26,10 +26,12 @@ class LabOrder extends Model implements AuditableContract
         return $this->belongsTo(Visit::class);
     }
 
-    public function labTest()
-    {
-        return $this->belongsTo(LabTest::class);
-    }
+public function labTest()
+{
+    return $this->belongsTo(\App\Models\LabTest::class, 'lab_test_id');
+}
+
+
     public function getStatusLabelAttribute()
     {
         return ucfirst($this->status);

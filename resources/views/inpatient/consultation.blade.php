@@ -54,135 +54,259 @@
     {{-- Tabs Navigation --}}
     <ul class="nav nav-tabs mb-3" id="inpatientTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="consultation-tab" data-bs-toggle="tab" href="#consultation" role="tab"
-                aria-controls="consultation" aria-selected="true">
-                Consultation
-            </a>
+            <button class="nav-link active" id="consultation-tab" data-bs-toggle="tab" data-bs-target="#consultation"
+                type="button" role="tab" aria-controls="consultation" aria-selected="true">
+                {{ __('Consultation') }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="vitals-tab" data-bs-toggle="tab" href="#vitals" role="tab" aria-controls="vitals"
-                aria-selected="false">
-                Vitals
-            </a>
+            <button class="nav-link" id="progress-tab" data-bs-toggle="tab" data-bs-target="#progress" type="button"
+                role="tab" aria-controls="progress" aria-selected="false">
+                {{ __('Daily Progress') }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="medications-tab" data-bs-toggle="tab" href="#medications" role="tab"
-                aria-controls="medications" aria-selected="false">
-                Medications
-            </a>
+            <button class="nav-link" id="nursing-tab" data-bs-toggle="tab" data-bs-target="#nursing" type="button"
+                role="tab" aria-controls="nursing" aria-selected="false">
+                {{ __('Nursing Notes') }}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="vitals-tab" data-bs-toggle="tab" data-bs-target="#vitals" type="button"
+                role="tab" aria-controls="vitals" aria-selected="false">
+                {{ __('Vitals') }}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="medications-tab" data-bs-toggle="tab" data-bs-target="#medications"
+                type="button" role="tab" aria-controls="medications" aria-selected="false">
+                {{ __('Medications') }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="labs-tab" data-bs-toggle="tab" data-bs-target="#labs" type="button" role="tab"
-                aria-controls="labs" aria-selected="true">Labs</button>
+                aria-controls="labs" aria-selected="false">
+                {{ __('Labs') }}
+            </button>
         </li>
-
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="radiology-tab" data-bs-toggle="tab" data-bs-target="#radiology" type="button"
-                role="tab" aria-controls="radiology" aria-selected="false">Radiology</button>
+                role="tab" aria-controls="radiology" aria-selected="false">
+                {{ __('Radiology') }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button"
-                role="tab" aria-controls="services" aria-selected="false">Services</button>
+                role="tab" aria-controls="services" aria-selected="false">
+                {{ __('Services') }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="procedures-tab" data-bs-toggle="tab" data-bs-target="#procedures" type="button"
-                role="tab" aria-controls="procedures" aria-selected="false">Procedures</button>
+                role="tab" aria-controls="procedures" aria-selected="false">
+                {{ __('Procedures') }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="discharge-tab" data-bs-toggle="tab" data-bs-target="#discharge" type="button"
-                role="tab" aria-controls="discharge" aria-selected="false">Discharge</button>
+                role="tab" aria-controls="discharge" aria-selected="false">
+                {{ __('Discharge') }}
+            </button>
         </li>
-
     </ul>
+
 
     {{-- Tabs Content --}}
     <div class="tab-content" id="inpatientTabContent">
 
-        {{-- Consultation Tab --}}
-        <div class="tab-pane fade show active" id="consultation" role="tabpanel" aria-labelledby="consultation-tab">
-            <div class="card-box bg-white box-shadow border-radius-10">
-                <div class="pd-20">
-                    <h1 class="h4 mb-4 text-primary">{{ __('Inpatient Consultation') }}</h1>
 
-                    <form method="POST" action="{{ route('consultation.store') }}">
-                        @csrf
- <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
-                        <div class="row">
-                         
-                            <div class="col-md-6 mb-3">
-                                <label for="consultation_date" class="form-label">{{ __('Consultation Date') }}</label>
-                                <input type="date" name="consultation_date" class="form-control"
-                                    value="{{ date('Y-m-d') }}" required>
+
+        <div class="tab-content" id="inpatientTabsContent">
+
+            {{-- Consultation Tab --}}
+            <div class="tab-pane fade show active" id="consultation" role="tabpanel" aria-labelledby="consultation-tab">
+                <div class="card-box bg-white box-shadow border-radius-10">
+                    <div class="pd-20">
+                        <h1 class="h4 mb-4 text-primary">{{ __('Inpatient Consultation') }}</h1>
+
+                        <form method="POST" action="{{ route('inpatient.consultation.store') }}">
+                            @csrf
+                            <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="consultation_date"
+                                        class="form-label">{{ __('Consultation Date') }}</label>
+                                    <input type="date" name="consultation_date" class="form-control"
+                                        value="{{ date('Y-m-d') }}" required>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="notes" class="form-label">{{ __('Consultation Notes') }}</label>
+                                    <textarea name="notes" rows="3" class="form-control" required></textarea>
+                                </div>
                             </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label for="notes" class="form-label">{{ __('Consultation Notes') }}</label>
-                                <textarea name="notes" rows="3" class="form-control" required></textarea>
-                            </div>
-                        </div>
+                            <div class="form-section-title">{{ __('Clinical Details') }}</div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="past_history" class="form-label">{{ __('Past History') }}</label>
+                                    <textarea name="past_history" rows="2" class="form-control"></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="general_examination"
+                                        class="form-label">{{ __('General Examination') }}</label>
+                                    <textarea name="general_examination" rows="2" class="form-control"></textarea>
+                                </div>
 
-                        <div class="form-section-title">{{ __('Clinical Details') }}</div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="past_history" class="form-label">{{ __('Past History') }}</label>
-                                <textarea name="past_history" rows="2" class="form-control"></textarea>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="general_examination"
-                                    class="form-label">{{ __('General Examination') }}</label>
-                                <textarea name="general_examination" rows="2" class="form-control"></textarea>
+                                <div class="col-md-6 mb-3">
+                                    <label for="systematic_examination"
+                                        class="form-label">{{ __('Systematic Examination') }}</label>
+                                    <select name="systematic_examination" class="form-control select2">
+                                        <option value="">{{ __('Select Systematic Finding...') }}</option>
+                                        @foreach($systematics as $finding)
+                                        <option value="{{ $finding->name }}">{{ $finding->system }} —
+                                            {{ $finding->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="investigation" class="form-label">{{ __('Investigation') }}</label>
+                                    <textarea name="investigation" rows="2" class="form-control"></textarea>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="diagnosis" class="form-label">{{ __('Diagnosis') }}</label>
+                                    <select name="diagnosis" class="form-control select2">
+                                        <option value="">{{ __('Select Clinical Diagnosis...') }}</option>
+                                        @foreach($diagnoses as $dx)
+                                        <option value="{{ $dx->name }}">{{ $dx->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="icd11_diagnosis" class="form-label">{{ __('ICD11 Diagnosis') }}</label>
+                                    <select name="icd11_diagnosis" class="form-control select2" required>
+                                        <option value="">{{ __('Search ICD11 Diagnosis...') }}</option>
+                                        @foreach($icd11s as $icd)
+                                        <option value="{{ $icd->code }} - {{ $icd->description }}">
+                                            {{ $icd->code }} - {{ $icd->description }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="treatment_plan" class="form-label">{{ __('Treatment Plan') }}</label>
+                                    <textarea name="treatment_plan" rows="2" class="form-control"></textarea>
+                                </div>
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="systematic_examination"
-                                    class="form-label">{{ __('Systematic Examination') }}</label>
-                                <select name="systematic_examination" class="form-control select2">
-                                    <option value="">{{ __('Select Systematic Finding...') }}</option>
-                                    @foreach($systematics as $finding)
-                                    <option value="{{ $finding->name }}">{{ $finding->system }} — {{ $finding->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="investigation" class="form-label">{{ __('Investigation') }}</label>
-                                <textarea name="investigation" rows="2" class="form-control"></textarea>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="diagnosis" class="form-label">{{ __('Diagnosis') }}</label>
-                                <select name="diagnosis" class="form-control select2">
-                                    <option value="">{{ __('Select Clinical Diagnosis...') }}</option>
-                                    @foreach($diagnoses as $dx)
-                                    <option value="{{ $dx->name }}">{{ $dx->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="icd11_diagnosis" class="form-label">{{ __('ICD11 Diagnosis') }}</label>
-                                <select name="icd11_diagnosis" class="form-control select2" required>
-                                    <option value="">{{ __('Search ICD11 Diagnosis...') }}</option>
-                                    @foreach($icd11s as $icd)
-                                    <option value="{{ $icd->code }} - {{ $icd->description }}">
-                                        {{ $icd->code }} - {{ $icd->description }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label for="treatment_plan" class="form-label">{{ __('Treatment Plan') }}</label>
-                                <textarea name="treatment_plan" rows="2" class="form-control"></textarea>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-success">{{ __('Save Inpatient Consultation') }}</button>
-                    </form>
+                            <button class="btn btn-success">{{ __('Save Inpatient Consultation') }}</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
+            {{-- Daily Progress Tab --}}
+            <div class="tab-pane fade" id="progress" role="tabpanel" aria-labelledby="progress-tab">
+                <div class="card-box bg-white box-shadow border-radius-10">
+                    <div class="pd-20">
+                        <h1 class="h4 mb-4 text-primary">{{ __('Daily Progress Note') }}</h1>
+
+                        <form method="POST" action="{{ route('inpatient.progress.store') }}">
+
+                            @csrf
+                            <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="progress_date" class="form-label">{{ __('Date') }}</label>
+                                    <input type="date" name="progress_date" class="form-control"
+                                        value="{{ date('Y-m-d') }}" required>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="subjective" class="form-label">{{ __('Subjective') }}</label>
+                                    <textarea name="subjective" rows="2" class="form-control" required></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="objective" class="form-label">{{ __('Objective') }}</label>
+                                    <textarea name="objective" rows="2" class="form-control"></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="assessment" class="form-label">{{ __('Assessment') }}</label>
+                                    <textarea name="assessment" rows="2" class="form-control" required></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="plan" class="form-label">{{ __('Plan') }}</label>
+                                    <textarea name="plan" rows="2" class="form-control" required></textarea>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary">{{ __('Save Progress Note') }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Nursing Notes Tab --}}
+            <div class="tab-pane fade" id="nursing" role="tabpanel" aria-labelledby="nursing-tab">
+                <div class="card-box bg-white box-shadow border-radius-10">
+                    <div class="pd-20">
+                        <h1 class="h4 mb-4 text-primary">{{ __('Nursing Notes') }}</h1>
+
+                        <form method="POST" action="{{ route('inpatient.nursing.store') }}">
+                            @csrf
+                            <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nursing_date" class="form-label">{{ __('Date') }}</label>
+                                    <input type="date" name="nursing_date" class="form-control"
+                                        value="{{ date('Y-m-d') }}" required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="shift" class="form-label">{{ __('Shift') }}</label>
+                                    <select name="shift" class="form-control" required>
+                                        <option value="">{{ __('Select Shift') }}</option>
+                                        <option value="Morning">Morning</option>
+                                        <option value="Evening">Evening</option>
+                                        <option value="Night">Night</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="observations" class="form-label">{{ __('Observations') }}</label>
+                                    <textarea name="observations" rows="2" class="form-control"></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="vitals" class="form-label">{{ __('Vitals') }}</label>
+                                    <textarea name="vitals" rows="2" class="form-control"></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="interventions"
+                                        class="form-label">{{ __('Interventions / Meds Given') }}</label>
+                                    <textarea name="interventions" rows="2" class="form-control"></textarea>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-info">{{ __('Save Nursing Note') }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
 
         {{-- Vitals Tab --}}
         <div class="tab-pane fade" id="vitals" role="tabpanel" aria-labelledby="vitals-tab">
@@ -248,14 +372,15 @@
 
 
         {{-- MEDICATIONS TAB --}}
+
         <div class="tab-pane fade" id="medications" role="tabpanel" aria-labelledby="medications-tab">
             <div class="card-box bg-white box-shadow border-radius-10 mt-4">
                 <div class="pd-20">
                     <h1 class="h4 mb-4">{{ __('Prescribe Medications') }}</h1>
 
                     <form method="POST" action="{{ route('visits.medications.store') }}" id="medication-form">
-                        <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
                         @csrf
+                        <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
 
                         <div class="row align-items-end" id="drug-row">
                             <div class="col-md-3 mb-3">
@@ -288,8 +413,6 @@
                             <div class="col-md-1 mb-3">
                                 <label class="form-label">Qty</label>
                                 <input type="number" id="quantity" class="form-control">
-
-
                             </div>
                             <div class="col-md-1 mb-3">
                                 <label class="form-label">Duration</label>
@@ -299,7 +422,6 @@
                                 <button type="button" class="btn btn-secondary btn-sm mt-4" id="add-drug">Add</button>
                             </div>
                         </div>
-
 
                         <div class="mb-3">
                             <table class="table table-bordered" id="prescription-table">
@@ -315,10 +437,9 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
-
                         </div>
 
-                        <button class="btn btn-success">{{ __('Save Prescription') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('Save Prescription') }}</button>
                     </form>
                 </div>
             </div>
@@ -429,8 +550,8 @@
                         <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}">
                         <div class="mb-3">
                             <label for="procedures_services" class="form-label">{{ __('Procedures') }}</label>
-                            <select name="services[]" id="procedures_services" class="form-select select2 form-control" multiple
-                                required>
+                            <select name="services[]" id="procedures_services" class="form-select select2 form-control"
+                                multiple required>
                                 @foreach($procedures as $procedure)
                                 <option value="{{ $procedure->id }}" data-price="{{ $procedure->price }}">
                                     {{ $procedure->name }} - ${{ $procedure->price }}
@@ -586,19 +707,13 @@
 
 @push('scripts')
 <script>
- $(document).ready(function () {
+    $(document).ready(function () {
         // Initialize select2
         $('.select2').select2({
             placeholder: 'Search...',
             allowClear: true
         });
 
-  
-
-
- 
-
-        // Inpatient Medication add button
         $('#add-drug').click(function () {
             let drug = $('#drug_id option:selected');
             let dosage = $('#dosage_id option:selected');
@@ -613,35 +728,17 @@
 
             let row = `
                 <tr>
-                    <td>
-                        <input type="hidden" name="drugs[]" value="${drug.val()}">
-                        ${drug.text()}
-                    </td>
-                    <td>
-                        <input type="hidden" name="dosages[]" value="${dosage.val()}">
-                        ${dosage.text()}
-                    </td>
-                    <td>
-                        <input type="hidden" name="routes[]" value="${route.val()}">
-                        ${route.text()}
-                    </td>
-                    <td>
-                        <input type="hidden" name="quantities[]" value="${quantity}">
-                        ${quantity}
-                    </td>
-                    <td>
-                        <input type="hidden" name="durations[]" value="${duration}">
-                        ${duration} days
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-danger remove-row">Remove</button>
-                    </td>
+                    <td><input type="hidden" name="drugs[]" value="${drug.val()}">${drug.text()}</td>
+                    <td><input type="hidden" name="dosages[]" value="${dosage.val()}">${dosage.text()}</td>
+                    <td><input type="hidden" name="routes[]" value="${route.val()}">${route.text()}</td>
+                    <td><input type="hidden" name="quantities[]" value="${quantity}">${quantity}</td>
+                    <td><input type="hidden" name="durations[]" value="${duration}">${duration} days</td>
+                    <td><button type="button" class="btn btn-sm btn-danger remove-row">Remove</button></td>
                 </tr>
             `;
-
             $('#prescription-table tbody').append(row);
 
-            // Clear inputs
+            // Reset inputs
             $('#drug_id').val('').trigger('change');
             $('#dosage_id').val('').trigger('change');
             $('#route_id').val('').trigger('change');
@@ -649,63 +746,60 @@
             $('#duration').val('');
         });
 
-        // Remove drug row
         $(document).on('click', '.remove-row', function () {
             $(this).closest('tr').remove();
         });
-    });
 
-    //
+        $('#medication-form').submit(function (e) {
+            if ($('#prescription-table tbody tr').length === 0) {
+                alert('Please add at least one medication before saving.');
+                e.preventDefault();
+            }
+        });
 
-
-        // Set visit_id in all forms when global select changes
+        // Visit ID sync
         $('#global_visit_id').on('change', function () {
             var visitId = $(this).val();
             $('.visit-id-input').val(visitId);
         });
-
-        // Optionally, set the initial value if needed
         $('.visit-id-input').val($('#global_visit_id').val());
 
-        // Calculate totals for each tab
+        // Totals calculation per tab
         function setupTotalCalc(serviceSelector, totalSelector) {
             $(serviceSelector).on('change', function () {
                 let total = 0;
                 $(serviceSelector + ' option:selected').each(function () {
-                    total += parseFloat($(this).data('price'));
+                    total += parseFloat($(this).data('price')) || 0;
                 });
                 $(totalSelector).val(total.toFixed(2));
             });
         }
-
         setupTotalCalc('#labs_services', '#total_labs');
         setupTotalCalc('#radiology_services', '#total_radiology');
         setupTotalCalc('#services_services', '#total_services');
         setupTotalCalc('#procedures_services', '#total_procedures');
     });
 
-    //
+    // Outcome section toggle
     document.addEventListener('DOMContentLoaded', function () {
         const outcomeSelect = document.querySelector('[name="outcome"]');
         const referralDetails = document.getElementById('referral_details');
         const deathDetails = document.getElementById('death_details');
 
-        outcomeSelect.addEventListener('change', function () {
+        outcomeSelect?.addEventListener('change', function () {
             referralDetails.style.display = this.value === 'referred' ? 'block' : 'none';
             deathDetails.style.display = this.value === 'death' ? 'block' : 'none';
         });
     });
 
-
-    //discharge meds
-
+    // Discharge meds
     document.getElementById('add-discharge-drug').addEventListener('click', function () {
         const drugId = document.getElementById('discharge_drug_id').value;
-        const drugText = document.getElementById('discharge_drug_id').selectedOptions[0] ? .text;
+        const drugText = document.getElementById('discharge_drug_id').selectedOptions[0]?.text;
         const dosageId = document.getElementById('discharge_dosage_id').value;
-        const dosageText = document.getElementById('discharge_dosage_id').selectedOptions[0] ? .text;
+        const dosageText = document.getElementById('discharge_dosage_id').selectedOptions[0]?.text;
         const routeId = document.getElementById('discharge_route_id').value;
-        const routeText = document.getElementById('discharge_route_id').selectedOptions[0] ? .text;
+        const routeText = document.getElementById('discharge_route_id').selectedOptions[0]?.text;
         const duration = document.getElementById('discharge_duration').value;
         const quantity = document.getElementById('discharge_quantity').value;
 
@@ -715,15 +809,15 @@
         }
 
         const row = `
-        <tr>
-            <td>${drugText}<input type="hidden" name="drugs[]" value="${drugId}"></td>
-            <td>${dosageText}<input type="hidden" name="dosages[]" value="${dosageId}"></td>
-            <td>${routeText}<input type="hidden" name="routes[]" value="${routeId}"></td>
-            <td>${duration}<input type="hidden" name="durations[]" value="${duration}"></td>
-            <td>${quantity}<input type="hidden" name="quantities[]" value="${quantity}"></td>
-            <td><button type="button" class="btn btn-sm btn-danger remove-row">X</button></td>
-        </tr>
-    `;
+            <tr>
+                <td>${drugText}<input type="hidden" name="drugs[]" value="${drugId}"></td>
+                <td>${dosageText}<input type="hidden" name="dosages[]" value="${dosageId}"></td>
+                <td>${routeText}<input type="hidden" name="routes[]" value="${routeId}"></td>
+                <td>${duration}<input type="hidden" name="durations[]" value="${duration}"></td>
+                <td>${quantity}<input type="hidden" name="quantities[]" value="${quantity}"></td>
+                <td><button type="button" class="btn btn-sm btn-danger remove-row">X</button></td>
+            </tr>
+        `;
 
         document.querySelector('#discharge-meds-table tbody').insertAdjacentHTML('beforeend', row);
 
@@ -735,14 +829,14 @@
         document.getElementById('discharge_quantity').value = '';
     });
 
-    // Handle row removal
+    // Remove row handler for discharge table
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-row')) {
             e.target.closest('tr').remove();
         }
     });
-
 </script>
+
 
 
 @endpush

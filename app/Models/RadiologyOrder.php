@@ -31,15 +31,17 @@ class RadiologyOrder extends Model implements AuditableContract
         return $this->belongsTo(Visit::class);
     }
 
-    public function radiologyService()
-    {
-        return $this->belongsTo(RadiologyService::class);
-    }
+
 
     public function results()
     {
         return $this->hasMany(RadiologyResult::class);
     }
+   
+public function radiologyService()
+{
+    return $this->belongsTo(RadiologyService::class, 'radiology_id');
+}
 
     
 }
